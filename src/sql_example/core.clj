@@ -101,5 +101,5 @@
        (run! (fn [[heimo lajit]]
                (let [heimo-id (-> (insert-heimo tx {:tieteellinen (first heimo) :nimi (second heimo)}) :id)]
                  (assert heimo-id)
-                 (run! (fn [[latin nimi]]
+                 (run! (fn [[nimi latin]]
                          (insert-laji tx {:tieteellinen latin :nimi nimi :heimo-id heimo-id})) lajit))))))
