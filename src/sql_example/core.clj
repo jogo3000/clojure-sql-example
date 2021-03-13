@@ -87,8 +87,8 @@
 
 
 ;;; Helpompikin tapa syöttää lajit
-(def taksonomia {["Cinclus" "Koskikarat"]
-                 [["Cinclus cinclus" "Koskikara"]]
+(def taksonomia {["Koskikarat" "Cinclus"]
+                 [["Koskikara" "Cinclus cinclus"]]
 
                  ["Tiaiset" "Paridae"]
                  tiaisia
@@ -99,7 +99,7 @@
 (jdbc/with-db-transaction [tx db]
   (->> taksonomia
        (run! (fn [[heimo lajit]]
-               (let [heimo-id (-> (insert-heimo tx {:tieteellinen (first heimo) :nimi (second heimo)}) :id)]
+               (let [heimo-id (-> (insert-heimo tx {:tieteellinen (second heimo) :nimi (first heimo)}) :id)]
                  (assert heimo-id)
                  (run! (fn [[nimi latin]]
                          (insert-laji tx {:tieteellinen latin :nimi nimi :heimo-id heimo-id})) lajit))))))
