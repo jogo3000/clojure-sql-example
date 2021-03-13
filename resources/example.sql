@@ -22,10 +22,10 @@ CREATE TABLE laji (
   FOREIGN KEY ("heimo-id") REFERENCES heimo(id) ON DELETE CASCADE
 );
 
--- :name insert-heimo :<!
+-- :name insert-heimo :<! :1
 INSERT INTO heimo (tieteellinen, nimi) VALUES (:tieteellinen, :nimi) returning *;
 
--- :name insert-laji :<!
+-- :name insert-laji :<! :1
 INSERT INTO laji ("heimo-id", tieteellinen, nimi) VALUES (:heimo-id, :tieteellinen, :nimi) returning *;
 
 -- :name select-all-laji :? :*

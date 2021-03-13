@@ -30,14 +30,18 @@
 (select-all-heimo db)
 ;; => ({:id 1, :tieteellinen "Cinclus", :nimi "Koskikarat"})
 
+;;; Palauttaa kaikki lajie
+(select-all-laji db)
+
 ;;; Palauttaa hierarkian
 (select-hierarchy db)
 ;; => ({:tieteellinen "Cinclus cinclus", :nimi "Koskikara", :heimo-tieteellinen "Cinclus", :heimo-nimi "Koskikarat"})
 
+
 ;;; Ladataan enemmän dataa tietokantaan
 (def heimoja [["Tiaiset" "Paridae"] ["Peipot" "Fringillidae"]])
 
-(map (fn [[nimi latin]]
+(run! (fn [[nimi latin]]
        (insert-heimo db {:tieteellinen latin :nimi nimi})) heimoja)
 ;; => (({:id 2, :tieteellinen "Paridae", :nimi "Tiaiset"}) ({:id 3, :tieteellinen "Fringillidae", :nimi "Peipot"}))
 
@@ -48,9 +52,29 @@
               ["Sinitiainen" "Cyanistes caeruleus"]
               ["Töyhtötiainen" "Lophophanes cristatus"]])
 
-(map (fn [[nimi latin]]
-       (insert-laji db {:heimo-id 2 :tieteellinen latin :nimi nimi})) tiaisia)
-;; => (({:id 2, :tieteellinen "Poecile montanus", :nimi "Hömötiainen", :heimo-id 2}) ({:id 3, :tieteellinen "Poecile cinctus", :nimi "Lapintiainen", :heimo-id 2}) ({:id 4, :tieteellinen "Periparus ater", :nimi "Kuusitiainen", :heimo-id 2}) ({:id 5, :tieteellinen "Parus major", :nimi "Talitiainen", :heimo-id 2}) ({:id 6, :tieteellinen "Cyanistes caeruleus", :nimi "Sinitiainen", :heimo-id 2}) ({:id 7, :tieteellinen "Lophophanes cristatus", :nimi "Töyhtötiainen", :heimo-id 2}))
+(def peippoja [["Urpiainen" "Acanthis flammea"]
+               ["Tundraurpiainen" "Acanthis hornemanni"]
+               ["Tikli" "Carduelis carduelis"]
+               ["Punavarpunen" "Carpodacus erythrinus"]
+               ["Viherpeippo" "Chloris chloris"]
+               ["Nokkavarpunen" "Coccothraustes coccothraustes"]
+               ["Peippo" "Fringilla coelebs"]
+               ["Järripeippo" "Fringilla montifringilla"]
+               ["Hemppo" "Linaria cannabina"]
+               ["Vuorihemppo" "Linaria flavirostris"]
+               ["Pikkukäpylintu" "Loxia curvirostra"]
+               ["Kirjosiipikäpylintu" "Loxia leucoptera"]
+               ["Isokäpylintu" "Loxia pytyopsittacus"]
+               ["Taviokuurna" "Pinicola enucleator"]
+               ["Punatulkku" "Pyrrhula pyrrhula"]
+               ["Keltahemppo" "Serinus serinus"]
+               ["Vihervarpunen" "Spinus spinus"]])
+
+(run! (fn [[nimi latin]]
+        (insert-laji db {:heimo-id 2 :tieteellinen latin :nimi nimi})) tiaisia)
+
+(run! (fn [[nimi latin]]
+        (insert-laji db {:heimo-id 3 :tieteellinen latin :nimi nimi})) peippoja)
 
 (->> (select-hierarchy db)
      (reduce (fn [m {:keys [heimo-tieteellinen
@@ -60,3 +84,22 @@
                (update m {:tieteellinen heimo-tieteellinen
                           :nimi heimo-nimi} conj {:tieteellinen tieteellinen
                                                   :nimi nimi})) {}))
+
+
+;;; Helpompikin tapa syöttää lajit
+(def taksonomia {["Cinclus" "Koskikarat"]
+                 [["Cinclus cinclus" "Koskikara"]]
+
+                 ["Tiaiset" "Paridae"]
+                 tiaisia
+
+                 ["Peippoja" "Fringillidae"]
+                 peippoja})
+
+(jdbc/with-db-transaction [tx db]
+  (->> taksonomia
+       (run! (fn [[heimo lajit]]
+               (let [heimo-id (-> (insert-heimo tx {:tieteellinen (first heimo) :nimi (second heimo)}) :id)]
+                 (assert heimo-id)
+                 (run! (fn [[latin nimi]]
+                         (insert-laji tx {:tieteellinen latin :nimi nimi :heimo-id heimo-id})) lajit))))))
