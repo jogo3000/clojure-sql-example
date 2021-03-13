@@ -1,0 +1,4 @@
+{:paths ["src" "resources"]
+ :deps {org.clojure/clojure {:mvn/version "1.10.3"}
+        org.postgresql/postgresql {:mvn/version "42.2.2"}
+        com.layerware/hugsql {:mvn/version "0.5.1"}}}

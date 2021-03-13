@@ -1,0 +1,16 @@
+* Tietokanta
+Tietokantaa on helpointa ajaa kontissa, johon voi käyttää podmania tai
+dockeria.
+
+#+begin_src bash
+podman run --name example-postgres -e POSTGRES_PASSWORD=mysecretpassword -p 127.0.0.1:5432:5432 -d postgres
+#+end_src
+
+#+RESULTS:
+: 9f5ebf6da18e23d8ebaf8396577185e5db9ed1ce36ba55bcfe23e42f4a5a5b30
+
+* Clojure
+Arch linuxissa asentaminen käy näin:
+#+begin_src bash
+pacman -Syu clojure
+#+end_src
