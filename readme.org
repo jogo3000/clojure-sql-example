@@ -7,10 +7,24 @@ podman run --name example-postgres -e POSTGRES_PASSWORD=mysecretpassword -p 127.
 #+end_src
 
 * Clojure
-
 Asennusohjeet löytyvät https://clojure.org/guides/getting_started
 
 Arch linuxissa asentaminen käy näin (joudut luultavasti käyttämään sudoa):
 #+begin_src bash
 pacman -Syu clojure
 #+end_src
+
+* Projektin käynnistäminen
+Useimmissa koodieditoreissa löytyy Clojure-plugari ja lienee parasta
+tässä kohtaa viitata muutaman yleisimmän käyttöohjeisiin. Käytän itse
+Emacsia, jossa riittää että avaa core.clj -tiedoston ja komentaa
+=M-x cider-jack-in=.
+
+** Emacs + CIDER
+https://github.com/clojure-emacs/cider
+
+** VS Code + Calva
+https://github.com/BetterThanTomorrow/calva
+
+** IntelliJ IDEA + Cursive
+https://cursive-ide.com/
