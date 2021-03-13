@@ -30,7 +30,7 @@
 (select-all-heimo db)
 ;; => ({:id 1, :tieteellinen "Cinclus", :nimi "Koskikarat"})
 
-;;; Palauttaa kaikki lajie
+;;; Palauttaa kaikki lajit
 (select-all-laji db)
 
 ;;; Palauttaa hierarkian
